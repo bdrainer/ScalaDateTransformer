@@ -73,6 +73,8 @@ To execute the application tests:
 
 Run `sbt test`
 
+See the test class [DateTransformerTestSuite](src/test/scala/DateTransformerTestSuite.scala).
+
 ### Running the application
 
 The application outputs the results to the console.  A future improvement could be adding an argument that tells the 
@@ -126,5 +128,17 @@ The error displayed is
 ```text
 Error transforming dates with sourcePattern: MMMM d'th', yyyy, destinationPattern: M/d/yy - message: Text 'March 21, 1975' could not be parsed at index 8
 ```
+
+## Design
+
+The solution used was to convert the source pattern into a regular expression.  
+
+With the regular expression, the file is searched matching strings.  
+
+Given a list of string matches, they would be converted to a date instance using the source pattern then formatted 
+back into a string using the destination pattern.  
+
+Iterating over the string matches, the file text is replaced where the string matches are replaced with the destination
+pattern date strings.
 
 
