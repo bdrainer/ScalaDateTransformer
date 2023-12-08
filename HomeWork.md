@@ -1,6 +1,5 @@
 # Take Home Test
 
-Thanks for your interest in BCF.
 Please implement the requirements below and treat this as you would a real project.
 
 When complete please tar or zip the project and send it to us via email or

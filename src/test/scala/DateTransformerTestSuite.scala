@@ -4,6 +4,10 @@ import java.time.LocalDate
 
 class DateTransformerTestSuite extends munit.FunSuite {
 
+  test("should transform file") {
+    transformDates("files/file1.txt", "MMMM d'th', yyyy", "yyyy-MM-dd")
+  }
+
   test("should parse year, month, and day from a LocaleDate instance") {
     val ldt = LocalDate.of(2023, 3, 7)
 
@@ -39,14 +43,19 @@ class DateTransformerTestSuite extends munit.FunSuite {
 
     assertEquals(convertToRegex("YYYY-M-dd").toString(), yearMonthDayRegEx)
     assertEquals(convertToRegex("YYYY-MM-dd").toString(), yearMonthDayRegEx)
-    assertEquals(convertToRegex("YYYY-MMM-dd").toString(), s"($YearRegEx-($ShortMonths)-$MonthDayRegEx($DayOfMonthOptions)?)".r.toString())
-    assertEquals(convertToRegex("YYYY-MMMM-dd").toString(), s"($YearRegEx-($Months)-$MonthDayRegEx($DayOfMonthOptions)?)".r.toString())
+    assertEquals(convertToRegex("YYYY-MMM-dd").toString(),
+      s"($YearRegEx-($ShortMonths)-$MonthDayRegEx($DayOfMonthOptions)?)".r.toString())
+    assertEquals(convertToRegex("YYYY-MMMM-dd").toString(),
+      s"($YearRegEx-($Months)-$MonthDayRegEx($DayOfMonthOptions)?)".r.toString())
 
     assertEquals(convertToRegex("YYYY-MM-d").toString(), yearMonthDayRegEx)
 
-    assertEquals(convertToRegex("MMM dd, YYYY").toString(), s"(($ShortMonths) $MonthDayRegEx($DayOfMonthOptions)?, $YearRegEx)".r.toString())
-    assertEquals(convertToRegex("MMMM dd, YYYY").toString(), s"(($Months) $MonthDayRegEx($DayOfMonthOptions)?, $YearRegEx)".r.toString())
-    assertEquals(convertToRegex("MMMM dd'th', YYYY").toString(), s"(($Months) $MonthDayRegEx($DayOfMonthOptions)?, $YearRegEx)".r.toString())
+    assertEquals(convertToRegex("MMM dd, YYYY").toString(),
+      s"(($ShortMonths) $MonthDayRegEx($DayOfMonthOptions)?, $YearRegEx)".r.toString())
+    assertEquals(convertToRegex("MMMM dd, YYYY").toString(),
+      s"(($Months) $MonthDayRegEx($DayOfMonthOptions)?, $YearRegEx)".r.toString())
+    assertEquals(convertToRegex("MMMM dd'th', YYYY").toString(),
+      s"(($Months) $MonthDayRegEx($DayOfMonthOptions)?, $YearRegEx)".r.toString())
   }
 
   test("should convert date string from source pattern to destination pattern") {
@@ -72,22 +81,49 @@ class DateTransformerTestSuite extends munit.FunSuite {
       convertDateFormat("Sep 06, 1978", "MMM dd, yyyy", "M/d/yy"),
       "9/6/78")
     assertEquals(
-      convertDateFormat("April 26th, 2008", "MMMM dd'th', yyyy", "yyyy-MM-dd"),
-      "2008-04-26")
-    assertEquals(
       convertDateFormat("2008-04-26", "yyyy-MM-dd", "MMMM dd'th', yyyy"),
       "April 26th, 2008")
+    assertEquals(
+      convertDateFormat("April 1st, 2008", "MMMM d'st', yyyy", "yyyy-MM-dd"),
+      "2008-04-01")
+    assertEquals(
+      convertDateFormat("April 2nd, 2008", "MMMM d'nd', yyyy", "yyyy-MM-dd"),
+      "2008-04-02")
+    assertEquals(
+      convertDateFormat("April 3rd, 2008", "MMMM d'rd', yyyy", "yyyy-MM-dd"),
+      "2008-04-03")
+    assertEquals(
+      convertDateFormat("April 26th, 2008", "MMMM d'th', yyyy", "yyyy-MM-dd"),
+      "2008-04-26")
   }
 
-  test("should reformat text with source pattern \"MMMM d'th', yyyy\" and destination pattern 'MMMM dd, yyyy'") {
-    val expected = "2008-04-26 was a day in time."
-
-    val obtained = transform("April 26th, 2008 was a day in time.",
-      "MMMM d'th', yyyy", "yyyy-MM-dd")
-
+  test("should reformat text with source pattern \"MMMM d'st', yyyy\" and destination pattern 'yyyy-MM-dd'") {
+    val expected = "2008-04-01 was a day in time."
+    val obtained = transform("April 1st, 2008 was a day in time.",
+      "MMMM d'st', yyyy", "yyyy-MM-dd")
     assertEquals(obtained, expected)
   }
 
+  test("should reformat text with source pattern \"MMMM d'nd', yyyy\" and destination pattern 'yyyy-MM-dd'") {
+    val expected = "2008-04-02 was a day in time."
+    val obtained = transform("April 2nd, 2008 was a day in time.",
+      "MMMM d'nd', yyyy", "yyyy-MM-dd")
+    assertEquals(obtained, expected)
+  }
+
+  test("should reformat text with source pattern \"MMMM d'rd', yyyy\" and destination pattern 'yyyy-MM-dd'") {
+    val expected = "2008-04-03 was a day in time."
+    val obtained = transform("April 3rd, 2008 was a day in time.",
+      "MMMM d'rd', yyyy", "yyyy-MM-dd")
+    assertEquals(obtained, expected)
+  }
+
+  test("should reformat text with source pattern \"MMMM d'th', yyyy\" and destination pattern 'yyyy-MM-dd'") {
+    val expected = "2008-04-26 was a day in time."
+    val obtained = transform("April 26th, 2008 was a day in time.",
+      "MMMM d'th', yyyy", "yyyy-MM-dd")
+    assertEquals(obtained, expected)
+  }
 
   test("should reformat text with source pattern 'M/d/yy' and destination pattern 'MMMM dd, yyyy'") {
     val expected =
