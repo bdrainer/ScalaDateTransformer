@@ -18,7 +18,7 @@ The valid **source pattern** used by this application are:
 Examples are:
 * MMM dd, yyyy
 * yyyy-MM-dd
-* MMMM d''th', yyyy
+* MMMM d'th', yyyy
 
 See below for running the application.  There is some things to be aware of when running this for the commandline.
 
