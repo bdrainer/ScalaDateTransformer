@@ -86,7 +86,7 @@ The application outputs the results to the console.  A future improvement could 
 application the file to write the transformed contents, or a REST API taking a file upload that returns the
 transformed text in the response body or a file.
 
-The arguments required by the application are expectdd to be in this order: `filepath sourcePattern destinationPattern`
+The arguments required by the application are expected to be in this order: `filepath sourcePattern destinationPattern`
 
 * filepath - the path to the file to be transformed, it can be an absolute path or a path relative to the folder you are in
 * sourcePattern - the pattern of the dates in the file
