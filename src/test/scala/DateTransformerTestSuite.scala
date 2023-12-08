@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException
 
 class DateTransformerTestSuite extends munit.FunSuite {
 
-  test("should throws FileNotFoundException") {
+  test("should throw FileNotFoundException") {
     val exception = intercept[FileNotFoundException](
       TransformerUtilities.transformFile(
         "files/filenotfound.txt", "MMMM d'th', yyyy", "yyyy-MM-dd")
@@ -14,7 +14,7 @@ class DateTransformerTestSuite extends munit.FunSuite {
     assert(clue(exception.getMessage).contains("files/filenotfound.txt"))
   }
 
-  test("should throws DateTimeParseException") {
+  test("should throw DateTimeParseException") {
     val exception = intercept[DateTimeParseException](
       TransformerUtilities.transformFile(
         "files/file1.txt", "MMMM d'th', yyyy", "yyyy-MM-dd")
