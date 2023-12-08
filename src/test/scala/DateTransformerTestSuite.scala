@@ -1,11 +1,25 @@
-import TransformerUtilities.{DayOfMonthOptions, MonthDayRegEx, Months, ShortMonths, YearRegEx, convertDateFormat, convertToRegex, dateToString, transform}
+import TransformerUtilities.{DayOfMonthOptions, MonthDayRegEx, Months, ShortMonths, YearRegEx, convertDateFormat, convertToRegex, dateToString}
 
+import java.io.FileNotFoundException
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 
 class DateTransformerTestSuite extends munit.FunSuite {
 
-  test("should transform file") {
-    transformDates("files/file1.txt", "MMMM d'th', yyyy", "yyyy-MM-dd")
+  test("should throws FileNotFoundException") {
+    val exception = intercept[FileNotFoundException](
+      TransformerUtilities.transformFile(
+        "files/filenotfound.txt", "MMMM d'th', yyyy", "yyyy-MM-dd")
+    )
+    assert(clue(exception.getMessage).contains("files/filenotfound.txt"))
+  }
+
+  test("should throws DateTimeParseException") {
+    val exception = intercept[DateTimeParseException](
+      TransformerUtilities.transformFile(
+        "files/file1.txt", "MMMM d'th', yyyy", "yyyy-MM-dd")
+    )
+    assert(clue(exception.getMessage).contains("could not be parsed"))
   }
 
   test("should parse year, month, and day from a LocaleDate instance") {
@@ -99,28 +113,28 @@ class DateTransformerTestSuite extends munit.FunSuite {
 
   test("should reformat text with source pattern \"MMMM d'st', yyyy\" and destination pattern 'yyyy-MM-dd'") {
     val expected = "2008-04-01 was a day in time."
-    val obtained = transform("April 1st, 2008 was a day in time.",
+    val obtained = TransformerUtilities.transform("April 1st, 2008 was a day in time.",
       "MMMM d'st', yyyy", "yyyy-MM-dd")
     assertEquals(obtained, expected)
   }
 
   test("should reformat text with source pattern \"MMMM d'nd', yyyy\" and destination pattern 'yyyy-MM-dd'") {
     val expected = "2008-04-02 was a day in time."
-    val obtained = transform("April 2nd, 2008 was a day in time.",
+    val obtained = TransformerUtilities.transform("April 2nd, 2008 was a day in time.",
       "MMMM d'nd', yyyy", "yyyy-MM-dd")
     assertEquals(obtained, expected)
   }
 
   test("should reformat text with source pattern \"MMMM d'rd', yyyy\" and destination pattern 'yyyy-MM-dd'") {
     val expected = "2008-04-03 was a day in time."
-    val obtained = transform("April 3rd, 2008 was a day in time.",
+    val obtained = TransformerUtilities.transform("April 3rd, 2008 was a day in time.",
       "MMMM d'rd', yyyy", "yyyy-MM-dd")
     assertEquals(obtained, expected)
   }
 
   test("should reformat text with source pattern \"MMMM d'th', yyyy\" and destination pattern 'yyyy-MM-dd'") {
     val expected = "2008-04-26 was a day in time."
-    val obtained = transform("April 26th, 2008 was a day in time.",
+    val obtained = TransformerUtilities.transform("April 26th, 2008 was a day in time.",
       "MMMM d'th', yyyy", "yyyy-MM-dd")
     assertEquals(obtained, expected)
   }
@@ -138,7 +152,7 @@ class DateTransformerTestSuite extends munit.FunSuite {
         |On 9/6/78 a really neat thing happened.  But on 10/10/03 thing went poorly.
         |I am hopeful that 10/11 will be better.""".stripMargin
 
-    val obtained = transform(text, "M/d/yy", "MMMM dd, yyyy")
+    val obtained = TransformerUtilities.transform(text, "M/d/yy", "MMMM dd, yyyy")
     assertEquals(obtained, expected)
   }
 }

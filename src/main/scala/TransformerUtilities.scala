@@ -1,5 +1,7 @@
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.io.Source
+import scala.util.Using
 import scala.util.matching.Regex
 
 object TransformerUtilities {
@@ -46,21 +48,16 @@ object TransformerUtilities {
 
   def transform(fileString: String, sourcePattern: String, destinationPattern: String): String = {
     var text = fileString
-
     convertToRegex(sourcePattern).findAllIn(text).toList.foreach(stringToReplace => {
       text = text.replace(stringToReplace, convertDateFormat(stringToReplace, sourcePattern, destinationPattern))
     })
-
     text
   }
 
-  def transform(fileLines: List[String], sourcePattern: String, destinationPattern: String): String = {
-    var text : String = ""
-
-    convertToRegex(sourcePattern).findAllIn(text).toList.foreach(stringToReplace => {
-      text = text.replace(stringToReplace, convertDateFormat(stringToReplace, sourcePattern, destinationPattern))
-    })
-
-    text
+  def transformFile(filePath: String, sourcePattern: String, destinationPattern: String): String = {
+    Using.resource(Source.fromFile(filePath)) { source =>
+      val fileContents = source.getLines.mkString(sys.props("line.separator"))
+      TransformerUtilities.transform(fileContents, sourcePattern, destinationPattern)
+    }
   }
 }
